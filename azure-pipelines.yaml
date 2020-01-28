@@ -1,0 +1,25 @@
+variables:
+  jdkVersion: "1.11"
+
+trigger:
+  - master
+
+jobs:
+- job: build_and_release
+  displayName: Build, test and release
+  steps:
+  - script: |
+      git config --global user.name "Azure DevOps CI"
+      git config --global user.email "no-email@example.com"
+    displayName: Set Git user data
+  - task: Gradle@2
+    displayName: check
+    inputs:
+      tasks: check
+      jdkVersionOption: $(jdkVersion)
+  - task: Gradle@2
+    displayName: release
+    inputs:
+      tasks: release
+      options: -Prelease.customUsername=$(git.username) -Prelease.customPassword=$(git.password) -Prelease.disableChecks -Prelease.pushTagsOnly -Prelease.overriddenBranchName=$(Build.SourceBranch)
+      jdkVersionOption: $(jdkVersion)

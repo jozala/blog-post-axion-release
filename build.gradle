@@ -14,6 +14,17 @@ jar {
     }
 }
 
+scmVersion {
+    branchVersionCreator = [
+        'hotfix/.*': 'simple',
+        'feature/.*': 'versionWithBranch' // on feature branches add name of feature as version postfix
+    ]
+    versionIncrementer 'incrementMinor'
+    branchVersionIncrementer = [
+        'hotfix/.*': 'incrementPatch', // on hotfix branches - increment patch
+    ]
+}
+
 group 'pl.aetas'
 version = scmVersion.version
 
