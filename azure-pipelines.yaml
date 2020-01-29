@@ -4,6 +4,8 @@ variables:
 trigger:
   - master
 
+pr: none
+
 jobs:
 - job: build_and_release
   displayName: Build, test and release
