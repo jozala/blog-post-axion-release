@@ -1,3 +1,6 @@
+import org.eclipse.jgit.lib.Repository
+import pl.allegro.tech.build.axion.release.domain.VersionSanitizer
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.60'
     id 'application'
@@ -15,14 +18,27 @@ jar {
 }
 
 scmVersion {
+    useHighestVersion = true // increment version regardless of tags orders (next after highest found on any branch)
     branchVersionCreator = [
-        'hotfix/.*': 'simple',
-        'feature/.*': 'versionWithBranch' // on feature branches add name of feature as version postfix
+        'hotfix/.*': 'simple', // do not add anything to version on hotfix branch
+        'feature/.*': 'versionWithBranch' // on feature branches add name of branch to version postfix (additionally see custom tag serializer below)
     ]
-    versionIncrementer 'incrementMinor'
+    versionIncrementer 'incrementMinor' // increment minor by default
     branchVersionIncrementer = [
         'hotfix/.*': 'incrementPatch', // on hotfix branches - increment patch
     ]
+
+    tag { // tagging/versioning with branch name on "feature/*" branches (e.g. 1.2.0-feature-my-branch)
+        serialize = { rules, version ->
+            def branch = Repository.shortenRefName(project.property("release.overriddenBranchName"))
+            if (branch.startsWith('feature/')) {
+                def sanitizedBranch = new VersionSanitizer().sanitize(branch)
+                return rules.prefix ? rules.prefix + rules.versionSeparator + version + rules.versionSeparator + sanitizedBranch : version + rules.versionSeparator + sanitizedBranch
+            }
+
+            return rules.prefix ? rules.prefix + rules.versionSeparator + version : version
+        }
+    }
 }
 
 group 'pl.aetas'
