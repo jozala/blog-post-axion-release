@@ -1,2 +1,3 @@
 rootProject.name = 'blog-post-axion-release'
+include 'core'
 

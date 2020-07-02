@@ -29,9 +29,11 @@ scmVersion {
     ]
 
     tag { // tagging/versioning with branch name on "feature/*" branches (e.g. 1.2.0-feature-my-branch)
+        prefix = 'agritask'
         serialize = { rules, version ->
             def branch = Repository.shortenRefName(project.property("release.overriddenBranchName"))
             if (branch.startsWith('feature/')) {
+                System.out.println "Invoke method $rules"
                 def sanitizedBranch = new VersionSanitizer().sanitize(branch)
                 return rules.prefix ? rules.prefix + rules.versionSeparator + version + rules.versionSeparator + sanitizedBranch : version + rules.versionSeparator + sanitizedBranch
             }
@@ -59,3 +61,6 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+allprojects {
+    project.version = scmVersion.version
+}
