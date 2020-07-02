@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+apply plugin: 'pl.allegro.tech.build.axion-release'
+
+//group 'pl.aetas'
+//version ${projectVersion}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
